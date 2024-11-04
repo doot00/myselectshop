@@ -30,8 +30,14 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public List<ProductResponseDto> getProducts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return productService.getProducts(userDetails.getUser());
+    public Page<ProductResponseDto> getProducts(
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("isAsc") boolean isAsc,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return productService.getProducts(userDetails.getUser(),
+                page-1, size, sortBy, isAsc);
     }
 
     @GetMapping("/admin/products")
@@ -40,18 +46,5 @@ public class ProductController {
     }
 
 
-//    @GetMapping("/products")
-//    public Page<ProductResponseDto> getProducts(
-//            @RequestParam("page") int page,
-//            @RequestParam("size") int size,
-//            @RequestParam("sortBy") String sortBy,
-//            @RequestParam("isAsc") boolean isAsc,
-//
-//            @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        // 만들었으니 보내줘야 한다.
-//        return productService.getProducts(userDetails.getUser(),
-//                page-1, size, sortBy, isAsc);
-//                // 1을 빼서 보내준다.
-//    }
 
 }

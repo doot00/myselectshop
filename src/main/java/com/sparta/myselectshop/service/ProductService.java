@@ -5,9 +5,14 @@ import com.sparta.myselectshop.dto.ProductRequestDto;
 import com.sparta.myselectshop.dto.ProductResponseDto;
 import com.sparta.myselectshop.entity.Product;
 import com.sparta.myselectshop.entity.User;
+import com.sparta.myselectshop.entity.UserRoleEnum;
 import com.sparta.myselectshop.naver.dto.ItemDto;
 import com.sparta.myselectshop.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,34 +50,23 @@ public class ProductService {
 
     }
 
-    public List<ProductResponseDto> getProducts(User user){
-        List<Product> productList = productRepository.findAllByUser(user);
-        List<ProductResponseDto> responseDtoList = new ArrayList<>();
+    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc){
+        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort); // 객체를 넘겨 준다.
 
-        for (Product product : productList) {
-            responseDtoList.add(new ProductResponseDto(product));
+        UserRoleEnum userRoleEnum = user.getRole(); // 권한 정보가 담겨 진다.
+        Page<Product> productList;
+
+        if(userRoleEnum == UserRoleEnum.USER) {
+            productList = productRepository.findAllByUser(user, pageable);
+        } else {
+            productList = productRepository.findAll(pageable);
         }
 
-        return responseDtoList;
+        return productList.map(ProductResponseDto::new);
     }
-//    public Page<ProductResponseDto> getProducts(User user, int page, int size, String sortBy, boolean isAsc) {
-//        Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC; // false면 내림차순이 된다.
-//        Sort sort = Sort.by(direction, sortBy); // 정렬항목
-//        Pageable pageable = PageRequest.of(page, size, sort);
-//
-//        // 권한 확인
-//        UserRoleEnum userRoleEnum = user.getRole(); // 유저의 권한 정보
-//        Page<Product> productList;
-//
-//        if(userRoleEnum == UserRoleEnum.USER) { // 일반 계정이라면, 쿼리 메서드 호출
-//            productList = productRepository.findAllByUser(user, pageable);
-//        } else {
-//            productList = productRepository.findAll(pageable);
-//        }
-//
-//        // 페이지 타입으로 변경해야 하기 떄문에
-//        return productList.map(ProductResponseDto::new); // 메서드를 통해 하나씩 돌리면서 생성자가 호출이 된다.
-//    }
+
 
     @Transactional
     public void updateBySearch(Long id, ItemDto itemDto) {

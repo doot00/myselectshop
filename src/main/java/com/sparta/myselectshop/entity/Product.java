@@ -33,9 +33,9 @@ public class Product extends Timestamped {
 
     @Column(nullable = false)
     private int myprice;
-
-    @Column(nullable = false)
-    private Long userId;
+//
+//    @Column(nullable = false)
+//    private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY) // 회원 정보가 필요할 때만
     @JoinColumn(name = "user_id", nullable = false) //회원만 등록할 수 있도록 한다.
