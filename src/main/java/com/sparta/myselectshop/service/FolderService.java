@@ -15,6 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FolderService {
     private final FolderRepository folderRepository;
+
     public void addFolders(List<String> folderNames, User user) {
         List<Folder> existFolderList = folderRepository.findAllByUserAndNameIn(user, folderNames);
 
