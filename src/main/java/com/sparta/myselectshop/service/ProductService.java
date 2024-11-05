@@ -39,7 +39,7 @@ public class ProductService {
     @Transactional
     public ProductResponseDto updateProduct(Long id, ProductMypriceRequestDto requestDto) {
         int myprice = requestDto.getMyprice(); // price를 가져온다. 100원 이상이어야 한다.
-        if (myprice < MIN_MY_PRICE) {
+        if (myprice < MIN_MY_PRICE) { // 최저가 미만으로 작성
             // 100보다 작으면
             throw new IllegalArgumentException("유효하지 않은 관심 가격입니다. 최소 " + MIN_MY_PRICE + "원 이상으로 설정해 주세요.");
         }
