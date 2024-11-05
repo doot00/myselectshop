@@ -82,7 +82,7 @@ public class UserController {
         String token = kakaoService.kakaoLogin(code);
 
 
-        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token);
+        Cookie cookie = new Cookie(JwtUtil.AUTHORIZATION_HEADER, token.substring(7)); // 인코딩, 디코딩 하는 방법 대신 substring을 붙인다.
         cookie.setPath("/");
         response.addCookie(cookie);
 
